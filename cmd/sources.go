@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/metafates/mangal/color"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/tui"
-	"github.com/metafates/mangal/util"
+	"github.com/ryanmccool/static-mangal/color"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/tui"
+	"github.com/ryanmccool/static-mangal/util"
 	"github.com/spf13/viper"
 	"os"
 	"os/user"
@@ -14,11 +14,11 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/icon"
-	"github.com/metafates/mangal/provider"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/icon"
+	"github.com/ryanmccool/static-mangal/provider"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
@@ -125,7 +125,7 @@ var sourcesInstallCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Browse and install custom scrapers",
 	Long: `Browse and install custom scrapers from official GitHub repo.
-https://github.com/metafates/mangal-scrapers`,
+https://github.com/ryanmccool/static-mangal-scrapers`,
 	Run: func(cmd *cobra.Command, args []string) {
 		handleErr(tui.Run(&tui.Options{Install: true}))
 	},

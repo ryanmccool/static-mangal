@@ -2,12 +2,13 @@ package source
 
 import (
 	"fmt"
-	"github.com/metafates/mangal/anilist"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/log"
-	"github.com/metafates/mangal/util"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/anilist"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/log"
+	"github.com/ryanmccool/static-mangal/network"
+	"github.com/ryanmccool/static-mangal/util"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/spf13/viper"
@@ -146,7 +147,6 @@ func (m *Manga) DownloadCover(overwrite bool, path string, progress func(string)
 	if m.coverDownloaded {
 		return nil
 	}
-	m.coverDownloaded = true
 
 	log.Info("Downloading cover for ", m.Name)
 	progress("Downloading cover")
@@ -177,7 +177,7 @@ func (m *Manga) DownloadCover(overwrite bool, path string, progress func(string)
 		}
 	}
 
-	resp, err := http.Get(cover)
+	resp, err := network.Client.Get(cover)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -186,8 +186,7 @@ func (m *Manga) DownloadCover(overwrite bool, path string, progress func(string)
 	defer util.Ignore(resp.Body.Close)
 
 	if resp.StatusCode != http.StatusOK {
-		log.Error(err)
-		return err
+		return fmt.Errorf("download cover: unexpected HTTP status %s", resp.Status)
 	}
 
 	data, err := io.ReadAll(resp.Body)
@@ -196,12 +195,12 @@ func (m *Manga) DownloadCover(overwrite bool, path string, progress func(string)
 		return err
 	}
 
-	err = filesystem.Api().WriteFile(path, data, os.ModePerm)
-	if err != nil {
+	if err = filesystem.Api().WriteFile(path, data, os.ModePerm); err != nil {
 		log.Error(err)
 		return err
 	}
 
+	m.coverDownloaded = true
 	log.Info("Cover downloaded")
 	return nil
 }

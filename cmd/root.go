@@ -3,18 +3,16 @@ package cmd
 import (
 	"fmt"
 	cc "github.com/ivanpirog/coloredcobra"
-	"github.com/metafates/mangal/color"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/converter"
-	"github.com/metafates/mangal/icon"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/log"
-	"github.com/metafates/mangal/provider"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/tui"
-	"github.com/metafates/mangal/util"
-	"github.com/metafates/mangal/version"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/color"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/converter"
+	"github.com/ryanmccool/static-mangal/icon"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/log"
+	"github.com/ryanmccool/static-mangal/provider"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/tui"
+	"github.com/ryanmccool/static-mangal/version"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -64,15 +62,11 @@ func init() {
 		version.Notify()
 	})
 
-	// Clear temporary files on startup
-	go func() {
-		_ = util.Delete(where.Temp())
-	}()
 }
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   constant.Mangal,
+	Use:   constant.StaticMangal,
 	Short: "The ultimate manga downloader",
 	Long: constant.AsciiArtLogo + "\n" +
 		style.New().Italic(true).Foreground(color.HiRed).Render("    - The ultimate cli manga downloader"),

@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"github.com/invopop/jsonschema"
-	"github.com/metafates/mangal/anilist"
-	"github.com/metafates/mangal/converter"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/inline"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/provider"
-	"github.com/metafates/mangal/query"
-	"github.com/metafates/mangal/source"
-	"github.com/metafates/mangal/update"
+	"github.com/ryanmccool/static-mangal/anilist"
+	"github.com/ryanmccool/static-mangal/converter"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/inline"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/provider"
+	"github.com/ryanmccool/static-mangal/query"
+	"github.com/ryanmccool/static-mangal/source"
+	"github.com/ryanmccool/static-mangal/update"
 	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/spf13/cobra"
@@ -69,7 +69,7 @@ Chapter selectors:
 
 When using the json flag manga selector could be omitted. That way, it will select all mangas`,
 
-	Example: "https://github.com/metafates/mangal/wiki/Inline-mode",
+	Example: "https://github.com/ryanmccool/static-mangal/tree/main/docs",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		json, _ := cmd.Flags().GetBool("json")
 

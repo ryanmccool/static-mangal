@@ -3,11 +3,11 @@ package source
 import (
 	"fmt"
 	"github.com/dustin/go-humanize"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/util"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/util"
 	"github.com/samber/mo"
 	"github.com/spf13/viper"
 	"os"
@@ -46,6 +46,12 @@ func (c *Chapter) String() string {
 // Pages needs to be set before calling this function.
 func (c *Chapter) DownloadPages(temp bool, progress func(string)) (err error) {
 	c.size = 0
+	for index, page := range c.Pages {
+		if page == nil {
+			return fmt.Errorf("page #%d is empty, aborting download", index)
+		}
+	}
+
 	status := func() string {
 		return fmt.Sprintf(
 			"Downloading %s %s",
@@ -55,34 +61,44 @@ func (c *Chapter) DownloadPages(temp bool, progress func(string)) (err error) {
 	}
 
 	progress(status())
-	wg := sync.WaitGroup{}
+	var (
+		wg sync.WaitGroup
+		mu sync.Mutex
+	)
 	wg.Add(len(c.Pages))
 
 	for _, page := range c.Pages {
-		if page == nil {
-			return fmt.Errorf("page #%d is empty, aborting download", page.Index)
-		}
-
-		d := func(page *Page) {
+		download := func(page *Page) {
 			defer wg.Done()
 
-			// if at any point, an error is encountered, stop downloading other pages
-			if err != nil {
+			mu.Lock()
+			skip := err != nil
+			mu.Unlock()
+			if skip {
 				return
 			}
 
-			err = page.Download()
+			downloadErr := page.Download()
+
+			mu.Lock()
+			defer mu.Unlock()
+			if downloadErr != nil {
+				if err == nil {
+					err = downloadErr
+				}
+				return
+			}
+
 			c.size += page.Size
 			progress(status())
 		}
 
 		if viper.GetBool(key.DownloaderAsync) {
-			go d(page)
+			go download(page)
 		} else {
-			d(page)
+			download(page)
 		}
 	}
-
 	wg.Wait()
 
 	if err != nil {
@@ -91,7 +107,7 @@ func (c *Chapter) DownloadPages(temp bool, progress func(string)) (err error) {
 	}
 
 	c.isDownloaded = mo.Some(!temp)
-	return
+	return nil
 }
 
 // formattedName of the chapter according to the template in the config.
@@ -147,16 +163,15 @@ func (c *Chapter) IsDownloaded() bool {
 }
 
 func (c *Chapter) path(relativeTo string, createVolumeDir bool) (path string, err error) {
+	path = relativeTo
 	if createVolumeDir {
 		path = filepath.Join(path, util.SanitizeFilename(c.Volume))
-		err = filesystem.Api().MkdirAll(path, os.ModePerm)
-		if err != nil {
-			return
+		if err = filesystem.Api().MkdirAll(path, os.ModePerm); err != nil {
+			return "", err
 		}
 	}
 
-	path = filepath.Join(relativeTo, c.Filename())
-	return
+	return filepath.Join(path, c.Filename()), nil
 }
 
 func (c *Chapter) Path(temp bool) (path string, err error) {
@@ -213,7 +228,7 @@ func (c *Chapter) ComicInfo() *ComicInfo {
 		Letterer:   strings.Join(c.Manga.Metadata.Staff.Lettering, ","),
 		Translator: strings.Join(c.Manga.Metadata.Staff.Translation, ","),
 		Tags:       strings.Join(c.Manga.Metadata.Tags, ","),
-		Notes:      "Downloaded with Mangal. https://github.com/metafates/mangal",
+		Notes:      "Downloaded with Static Mangal. https://github.com/ryanmccool/static-mangal",
 		Manga:      "YesAndRightToLeft",
 	}
 }

@@ -2,12 +2,12 @@ package history
 
 import (
 	"github.com/metafates/gache"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/integration"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/log"
-	"github.com/metafates/mangal/source"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/integration"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/log"
+	"github.com/ryanmccool/static-mangal/source"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/spf13/viper"
 )
 

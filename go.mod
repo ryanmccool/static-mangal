@@ -1,4 +1,4 @@
-module github.com/metafates/mangal
+module github.com/ryanmccool/static-mangal
 
 go 1.18
 

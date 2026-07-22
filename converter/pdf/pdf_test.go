@@ -2,11 +2,11 @@ package pdf
 
 import (
 	"bytes"
-	"github.com/metafates/mangal/config"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/source"
+	"github.com/ryanmccool/static-mangal/config"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/source"
 	"github.com/samber/lo"
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/spf13/viper"

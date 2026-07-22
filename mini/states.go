@@ -2,12 +2,12 @@ package mini
 
 import (
 	"fmt"
-	"github.com/metafates/mangal/downloader"
-	"github.com/metafates/mangal/history"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/provider"
-	"github.com/metafates/mangal/source"
-	"github.com/metafates/mangal/util"
+	"github.com/ryanmccool/static-mangal/downloader"
+	"github.com/ryanmccool/static-mangal/history"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/provider"
+	"github.com/ryanmccool/static-mangal/source"
+	"github.com/ryanmccool/static-mangal/util"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"golang.org/x/exp/slices"

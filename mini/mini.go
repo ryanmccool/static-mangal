@@ -2,8 +2,8 @@ package mini
 
 import (
 	"errors"
-	"github.com/metafates/mangal/source"
-	"github.com/metafates/mangal/util"
+	"github.com/ryanmccool/static-mangal/source"
+	"github.com/ryanmccool/static-mangal/util"
 	"github.com/samber/lo"
 	"os"
 )

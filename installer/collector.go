@@ -1,43 +1,28 @@
 package installer
 
 import (
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/util"
-	"github.com/samber/lo"
-	"github.com/spf13/viper"
-	"path/filepath"
+	"fmt"
+	"path"
 )
 
-var collector *githubFilesCollector
-
-// Scrapers gets available scrapers from GitHub repo.
-// See https://github.com/metafates/mangal-scrapers
+// Scrapers gets the signed manifest from the configured, immutable scraper revision.
 func Scrapers() ([]*Scraper, error) {
-	if collector == nil {
-		setupCollector()
-	}
-
-	err := collector.collect()
+	manifest, baseURL, err := verifiedManifest()
 	if err != nil {
 		return nil, err
 	}
 
-	return lo.FilterMap(collector.Files, func(f *GithubFile, _ int) (*Scraper, bool) {
-		if filepath.Ext(f.Path) != ".lua" {
-			return nil, false
+	scrapers := make([]*Scraper, 0, len(manifest.Scrapers))
+	for _, entry := range manifest.Scrapers {
+		if !entry.valid() {
+			return nil, fmt.Errorf("invalid scraper manifest entry %q", entry.Name)
 		}
 
-		return &Scraper{
-			Name: util.FileStem(filepath.Base(f.Path)),
-			URL:  f.Url,
-		}, true
-	}), nil
-}
-
-func setupCollector() {
-	collector = &githubFilesCollector{
-		user:   viper.GetString(key.InstallerUser),
-		repo:   viper.GetString(key.InstallerRepo),
-		branch: viper.GetString(key.InstallerBranch),
+		scrapers = append(scrapers, &Scraper{
+			Name:   entry.Name,
+			URL:    baseURL + "/" + path.Clean(entry.Path),
+			SHA256: entry.SHA256,
+		})
 	}
+	return scrapers, nil
 }

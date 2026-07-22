@@ -3,9 +3,9 @@ package generic
 import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/source"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/source"
+	"github.com/ryanmccool/static-mangal/where"
 	"path/filepath"
 	"strings"
 	"time"

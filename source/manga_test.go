@@ -1,8 +1,8 @@
 package source
 
 import (
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/util"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/util"
 	"github.com/samber/lo"
 	. "github.com/smartystreets/goconvey/convey"
 	"os"
