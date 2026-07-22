@@ -136,7 +136,7 @@ Examples: ~/... or $HOME/... or ${MANGA_PATH}-mangal`,
 	},
 	{
 		key.DownloaderChapterNameTemplate,
-		"[{padded-index}] {chapter}",
+		"Chapter_{padded-index}",
 		`Key template of the downloaded chapters
 Path forbidden symbols will be replaced with "_"
 Available variables:
