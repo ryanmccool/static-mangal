@@ -325,7 +325,7 @@ Use "any" to show all languages`,
 	},
 	{
 		key.InstallerBranch,
-		"735bd4d235999491d5e6abdf0657907ac28f73dc",
+		"2a77a1502f0d4cac1de61a4ccd28db6cbcd995db",
 		"Immutable signed custom-scraper registry revision",
 	},
 	{
