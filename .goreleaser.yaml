@@ -99,7 +99,7 @@ brews:
 
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     homepage: "https://github.com/ryanmccool/static-mangal"
-    description: "The ultimate CLI manga downloader!"
+    description: "Static Mangal CLI"
     license: "MIT"
     skip_upload: false
 
@@ -127,7 +127,7 @@ scoop:
 
   commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
   homepage: "https://github.com/ryanmccool/static-mangal"
-  description: "The ultimate CLI manga downloader!"
+  description: "Static Mangal CLI"
   license: MIT
   skip_upload: false
 
@@ -157,7 +157,7 @@ release:
 nfpms:
   - file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://github.com/ryanmccool/static-mangal
-    maintainer: metafates <fates@duck.com>
+    maintainer: Ryan McCool
     description: |-
       The most advanced cli manga downloader in the entire universe!
 

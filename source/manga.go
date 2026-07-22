@@ -1,6 +1,8 @@
 package source
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"github.com/ryanmccool/static-mangal/anilist"
 	"github.com/ryanmccool/static-mangal/filesystem"
@@ -114,17 +116,26 @@ func (m *Manga) peekPath() string {
 func (m *Manga) Path(temp bool) (path string, err error) {
 	if temp {
 		if path = m.cachedTempPath; path != "" {
-			return
+			return path, nil
 		}
 
-		path = where.Temp()
+		var token [16]byte
+		if _, err = rand.Read(token[:]); err != nil {
+			return "", err
+		}
+		path = filepath.Join(where.Temp(), hex.EncodeToString(token[:]))
+		if err = filesystem.Api().MkdirAll(path, os.ModePerm); err != nil {
+			return "", err
+		}
 		m.cachedTempPath = path
-		return
+		return path, nil
 	}
 
 	path = m.peekPath()
-	_ = filesystem.Api().MkdirAll(path, os.ModePerm)
-	return
+	if err = filesystem.Api().MkdirAll(path, os.ModePerm); err != nil {
+		return "", err
+	}
+	return path, nil
 }
 
 func (m *Manga) GetCover() (string, error) {
