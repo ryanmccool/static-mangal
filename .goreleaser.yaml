@@ -18,9 +18,9 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -X 'github.com/metafates/mangal/constant.BuiltAt={{ .Date }}'
-      - -X 'github.com/metafates/mangal/constant.BuiltBy={{ .Env.USER }}'
-      - -X 'github.com/metafates/mangal/constant.Revision={{ .ShortCommit }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.BuiltAt={{ .Date }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.BuiltBy={{ .Env.USER }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.Revision={{ .ShortCommit }}'
       - -s
       - -w
 
@@ -80,16 +80,16 @@ dockers:
   - goos: linux
     goarch: amd64
     image_templates:
-      - "metafates/mangal:latest"
+      - "ghcr.io/ryanmccool/static-mangal:latest"
     skip_push: false
     use: docker
 
 brews:
-  - name: mangal
+  - name: static-mangal
 
     tap:
-      owner: metafates
-      name: homebrew-mangal
+      owner: ryanmccool
+      name: homebrew-static-mangal
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
 
@@ -98,7 +98,7 @@ brews:
       email: bot@goreleaser.com
 
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-    homepage: "https://github.com/metafates/mangal"
+    homepage: "https://github.com/ryanmccool/static-mangal"
     description: "The ultimate CLI manga downloader!"
     license: "MIT"
     skip_upload: false
@@ -114,8 +114,8 @@ brews:
 
 scoop:
   bucket:
-    owner: metafates
-    name: scoop-metafates
+    owner: ryanmccool
+    name: scoop-static-mangal
     branch: main
     token: "{{ .Env.SCOOP_TAP_GITHUB_TOKEN }}"
 
@@ -126,7 +126,7 @@ scoop:
     email: bot@goreleaser.com
 
   commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
-  homepage: "https://github.com/metafates/mangal"
+  homepage: "https://github.com/ryanmccool/static-mangal"
   description: "The ultimate CLI manga downloader!"
   license: MIT
   skip_upload: false
@@ -134,29 +134,29 @@ scoop:
 
 release:
   github:
-    owner: metafates
-    name: mangal
+    owner: ryanmccool
+    name: static-mangal
 
   name_template: "{{.ProjectName}} v{{.Version}}"
   header: |
     To install:
     ```sh
-    curl -sSL mangal.metafates.one/install | sh
+    curl -sSL github.com/ryanmccool/static-mangal | sh
     ```
 
     ## What's new?
 
   footer: |
 
-    **Full Changelog**: https://github.com/metafates/mangal/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: https://github.com/ryanmccool/static-mangal/compare/{{ .PreviousTag }}...{{ .Tag }}
 
     ---
 
-    Bugs? Suggestions? [Open an issue](https://github.com/metafates/mangal/issues/new/choose)
+    Bugs? Suggestions? [Open an issue](https://github.com/ryanmccool/static-mangal/issues/new/choose)
 
 nfpms:
   - file_name_template: "{{ .ConventionalFileName }}"
-    homepage: https://github.com/metafates/mangal
+    homepage: https://github.com/ryanmccool/static-mangal
     maintainer: metafates <fates@duck.com>
     description: |-
       The most advanced cli manga downloader in the entire universe!
