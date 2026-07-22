@@ -7,7 +7,7 @@ This catalog describes first-party repository content at review time. `vendor/` 
 | Path | Role |
 | --- | --- |
 | `main.go` | Process entrypoint: initialize configuration and logging, then execute Cobra. |
-| `go.mod`, `go.sum`, `vendor/` | Go 1.18 module, dependency locks, and vendored dependencies. Module path is still `github.com/metafates/mangal`. |
+| `go.mod`, `go.sum`, `vendor/` | Go 1.18 module, dependency locks, and vendored dependencies. Module path is `github.com/ryanmccool/static-mangal`. |
 | `README.md` | Upstream-oriented product/install/usage document; it includes an explicit upstream-maintenance warning and upstream URLs. |
 | `CHANGELOG.md` | Upstream release history through 4.0.6. |
 | `LICENSE` | MIT license with upstream copyright attribution. |

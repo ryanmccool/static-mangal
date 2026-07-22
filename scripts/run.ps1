@@ -1,12 +1,12 @@
 # WAS NOT TESTED
 
-$release_url = "https://api.github.com/repos/metafates/mangal/releases"
+$release_url = "https://api.github.com/repos/ryanmccool/static-mangal/releases"
 $tag = (Invoke-WebRequest -Uri $release_url -UseBasicParsing | ConvertFrom-Json)[0].tag_name
 $version = $tag.substring(1)
 $loc = "$HOME\AppData\Local\mangal"
 $url = ""
 $arch = $env:PROCESSOR_ARCHITECTURE
-$releases_api_url = "https://github.com/metafates/mangal/releases/download/$tag/mangal_${version}_Windows"
+$releases_api_url = "https://github.com/ryanmccool/static-mangal/releases/download/$tag/static-mangal_${version}_Windows"
 
 if ($arch -eq "AMD64")
 {

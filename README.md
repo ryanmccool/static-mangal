@@ -44,7 +44,7 @@ curl -sSL github.com/ryanmccool/static-mangal | sh
 ## Features
 
 - __Lua Scrapers!!!__ You can add any source you want by creating your own _(or using someone's else)_ scraper with
-  __Lua 5.1__. See [mangal-scrapers repository](https://github.com/metafates/mangal-scrapers)
+  __Lua 5.1__. See [mangal-scrapers repository](https://github.com/ryanmccool/static-mangal-scrapers)
 - __4 Built-in sources__ - [Mangadex](https://mangadex.org), [Manganelo](https://m.manganelo.com/wwww), [Manganato](https://manganato.com) & [Mangapill](https://mangapill.com)
 - __Download & Read Manga__ - I mean, it would be strange if you couldn't, right?
 - __Caching__ - Mangal will cache as much data as possible, so you don't have to wait for it to download the same data over and over again. 
@@ -79,8 +79,8 @@ thank you)
 
 Install using [Homebrew](https://brew.sh/)
 
-    brew tap metafates/mangal
-    brew install mangal
+    brew tap ryanmccool/static-mangal
+    brew install static-mangal
 
 ### Windows
 
@@ -124,12 +124,12 @@ nix-env -iA nixpkgs.mangal
 
 Install using Docker. (thanks to [@ArabCoders](https://github.com/ArabCoders) for reference)
 
-    docker pull metafates/mangal
+    docker pull ghcr.io/ryanmccool/static-mangal
 
 To run
 
 ```shell
-docker run --rm -ti -e "TERM=xterm-256color" -v $(PWD)/mangal/downloads:/downloads -v $(PWD)/mangal/config:/config metafates/mangal
+docker run --rm -ti -e "TERM=xterm-256color" -v $(PWD)/mangal/downloads:/downloads -v $(PWD)/mangal/config:/config ghcr.io/ryanmccool/static-mangal
 ```
 
 ### From source
@@ -154,10 +154,10 @@ make build # if you want to just build the binary
 
 ```shell
 # To build
-go build -ldflags "-X 'github.com/metafates/mangal/constant.BuiltAt=$(date -u)' -X 'github.com/metafates/mangal/constant.BuiltBy=$(whoami)' -X 'github.com/metafates/mangal/constant.Revision=$(git rev-parse --short HEAD)' -s -w"
+go build -ldflags "-X 'github.com/ryanmccool/static-mangal/constant.BuiltAt=$(date -u)' -X 'github.com/ryanmccool/static-mangal/constant.BuiltBy=$(whoami)' -X 'github.com/ryanmccool/static-mangal/constant.Revision=$(git rev-parse --short HEAD)' -s -w"
 
 # To install
-go install -ldflags "-X 'github.com/metafates/mangal/constant.BuiltAt=$(date -u)' -X 'github.com/metafates/mangal/constant.BuiltBy=$(whoami)' -X 'github.com/metafates/mangal/constant.Revision=$(git rev-parse --short HEAD)' -s -w"
+go install -ldflags "-X 'github.com/ryanmccool/static-mangal/constant.BuiltAt=$(date -u)' -X 'github.com/ryanmccool/static-mangal/constant.BuiltBy=$(whoami)' -X 'github.com/ryanmccool/static-mangal/constant.Revision=$(git rev-parse --short HEAD)' -s -w"
 ```
 
 </details>
@@ -257,7 +257,7 @@ Use env variable `MANGAL_CONFIG_PATH` to set custom config path.
 ## Custom scrapers
 
 TLDR; To browse and install a custom scraper
-from [mangal-scrapers repository](https://github.com/metafates/mangal-scrapers) run
+from [mangal-scrapers repository](https://github.com/ryanmccool/static-mangal-scrapers) run
 
     mangal sources install
 
@@ -265,7 +265,7 @@ Mangal has a Lua5.1 VM built-in + some useful libraries, such as headless chrome
 
 Check the [defined modules](https://github.com/metafates/mangal-lua-libs) for more information.
 
-For scrapers examples, check the [mangal-scrapers repository](https://github.com/metafates/mangal-scrapers)
+For scrapers examples, check the [mangal-scrapers repository](https://github.com/ryanmccool/static-mangal-scrapers)
 
 ### Creating a custom scraper
 
@@ -275,7 +275,7 @@ This command will create `example.lua` file in the `mangal where --sources` dire
 
 Open the file and edit it as you wish.
 Take a look at the comments for more information.
-See [mangal-scrapers repository](https://github.com/metafates/mangal-scrapers) for examples.
+See [mangal-scrapers repository](https://github.com/ryanmccool/static-mangal-scrapers) for examples.
 
 You can test it by running `mangal run <filepath>`
 
@@ -323,7 +323,7 @@ And of course, thanks to all contributors! You are awesome!
 
 <p align="center">
 <a href="https://github.com/ryanmccool/static-mangal/graphs/contributors">
-  <img alt="Contributors" src="https://contrib.rocks/image?repo=metafates/mangal" />
+  <img alt="Contributors" src="https://contrib.rocks/image?repo=ryanmccool/static-mangal" />
 </a>
 </p>
 
@@ -335,7 +335,7 @@ please consider starring it, that would mean a lot to me ⭐
 </p>
 
 <p align="center">
-<a href="https://star-history.com/#metafates/mangal&Date">
-<img alt="Star History" src="https://api.star-history.com/svg?repos=metafates/mangal&type=Date"/>
+<a href="https://star-history.com/#ryanmccool/static-mangal&Date">
+<img alt="Star History" src="https://api.star-history.com/svg?repos=ryanmccool/static-mangal&type=Date"/>
 </a>
 </p>

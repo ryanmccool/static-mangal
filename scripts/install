@@ -148,7 +148,7 @@ install_macos() {
     fi
 
     info "Installing with Homebrew"
-    brew tap metafates/mangal
+    brew tap ryanmccool/static-mangal
 
     if has mangal; then
         brew reinstall mangal
@@ -252,8 +252,8 @@ install_binary() {
 pre_install() {
     has mangal && warn "mangal is installed already, reinstalling"
 
-    RELEASES_URL="https://github.com/metafates/mangal/releases"
-    FILE_BASENAME="mangal"
+    RELEASES_URL="https://github.com/ryanmccool/static-mangal/releases"
+    FILE_BASENAME="static-mangal"
 
     info "Fetching latest version"
     TAG="$(curl -sfL -o /dev/null -w "%{url_effective}" "$RELEASES_URL/latest" |

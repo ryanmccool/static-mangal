@@ -3,9 +3,9 @@ package source
 import (
 	"github.com/ryanmccool/static-mangal/filesystem"
 	"github.com/ryanmccool/static-mangal/util"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	. "github.com/smartystreets/goconvey/convey"
-	"os"
 	"path/filepath"
 	"testing"
 )
@@ -83,9 +83,8 @@ func TestManga_Path(t *testing.T) {
 					Convey("It should be a directory", func() {
 						So(lo.Must(filesystem.Api().IsDir(path)), ShouldBeTrue)
 
-						Convey("It should be a temp directory", func() {
-							isTemp := lo.Must(filesystem.Api().Exists(filepath.Join(os.TempDir(), filepath.Base(path))))
-							So(isTemp, ShouldBeTrue)
+						Convey("It should be unique to the manga operation", func() {
+							So(filepath.Dir(path), ShouldEqual, where.Temp())
 						})
 					})
 				})

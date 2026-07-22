@@ -1,6 +1,6 @@
 # Static Mangal documentation
 
-This fork is a Go 1.18 CLI inherited from the unmaintained upstream `metafates/mangal` project. The upstream README states that maintenance ended in April 2025; this repository still carries upstream module, release, installer, and documentation identities.
+This fork is a Go 1.18 CLI inherited from the unmaintained upstream `metafates/mangal` project. The upstream README states that maintenance ended in April 2025; the inherited upstream identities were rehomed to this fork; the upstream warning remains historical context.
 
 ## Documents
 
