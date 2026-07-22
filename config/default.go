@@ -380,11 +380,6 @@ panic, fatal, error, warn, info, debug, trace`,
 		"Spacing between items in the TUI",
 	},
 	{
-		key.TUIReadOnEnter,
-		true,
-		"Read chapter on enter if other chapters aren't selected",
-	},
-	{
 		key.TUISearchPromptString,
 		"> ",
 		"Search prompt string to use",
