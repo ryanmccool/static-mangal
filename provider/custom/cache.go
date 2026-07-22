@@ -2,9 +2,9 @@ package custom
 
 import (
 	"github.com/metafates/gache"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/util"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/util"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/mo"
 	"path/filepath"
 	"time"

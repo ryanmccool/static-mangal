@@ -1,16 +1,16 @@
 package cmd
 
 import (
-	"github.com/metafates/mangal/color"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/version"
+	"github.com/ryanmccool/static-mangal/color"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/version"
 	"github.com/samber/lo"
 	"os"
 	"runtime"
 	"strings"
 	"text/template"
 
-	"github.com/metafates/mangal/constant"
+	"github.com/ryanmccool/static-mangal/constant"
 	"github.com/spf13/cobra"
 )
 
@@ -42,7 +42,7 @@ var versionCmd = &cobra.Command{
 			App      string
 		}{
 			Version:  constant.Version,
-			App:      constant.Mangal,
+			App:      constant.StaticMangal,
 			OS:       runtime.GOOS,
 			Arch:     runtime.GOARCH,
 			BuiltAt:  strings.TrimSpace(constant.BuiltAt),

@@ -3,10 +3,10 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/metafates/mangal/color"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/style"
+	"github.com/ryanmccool/static-mangal/color"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/style"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"reflect"
@@ -101,7 +101,7 @@ func (f *Field) Pretty() string {
 
 func (f *Field) Env() string {
 	env := strings.ToUpper(EnvKeyReplacer.Replace(f.Key))
-	appPrefix := strings.ToUpper(constant.Mangal + "_")
+	appPrefix := strings.ToUpper(constant.StaticMangal + "_")
 
 	if strings.HasPrefix(env, appPrefix) {
 		return env
@@ -315,18 +315,18 @@ Use "any" to show all languages`,
 	},
 	{
 		key.InstallerUser,
-		"metafates",
-		"Custom scrapers repository owner",
+		"ryanmccool",
+		"Signed custom-scraper registry owner",
 	},
 	{
 		key.InstallerRepo,
-		"mangal-scrapers",
-		"Custom scrapers repository name",
+		"static-mangal-scrapers",
+		"Signed custom-scraper registry name",
 	},
 	{
 		key.InstallerBranch,
-		"main",
-		"Custom scrapers repository branch",
+		"a61a221ad6a548caf93146f0941a3c49c2e6671f",
+		"Immutable signed custom-scraper registry revision",
 	},
 	{
 		key.GenAuthor,

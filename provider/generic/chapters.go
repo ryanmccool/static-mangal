@@ -2,7 +2,7 @@ package generic
 
 import (
 	"github.com/gocolly/colly/v2"
-	"github.com/metafates/mangal/source"
+	"github.com/ryanmccool/static-mangal/source"
 	"net/http"
 )
 

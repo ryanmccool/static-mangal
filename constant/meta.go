@@ -1,7 +1,7 @@
 package constant
 
 const (
-	Mangal    = "mangal"
-	Version   = "4.0.6"
-	UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+	StaticMangal = "static-mangal"
+	Version      = "0.1.0"
+	UserAgent    = "static-mangal/0.1 (+https://github.com/ryanmccool/static-mangal)"
 )

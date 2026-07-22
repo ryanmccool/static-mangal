@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"github.com/metafates/mangal/color"
+	"github.com/ryanmccool/static-mangal/color"
 	"github.com/samber/mo"
 	"os"
 
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
@@ -55,7 +55,7 @@ func init() {
 
 var whereCmd = &cobra.Command{
 	Use:   "where",
-	Short: "Show the paths for a files related to the " + constant.Mangal,
+	Short: "Show the paths for files related to " + constant.StaticMangal,
 	Run: func(cmd *cobra.Command, args []string) {
 		headerStyle := style.New().Bold(true).Foreground(color.HiPurple).Render
 

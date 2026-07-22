@@ -4,19 +4,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/metafates/mangal/color"
+	"github.com/ryanmccool/static-mangal/color"
 	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
 
 	levenshtein "github.com/ka-weihe/fast-levenshtein"
-	"github.com/metafates/mangal/config"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/icon"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/config"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/icon"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -202,7 +202,7 @@ var configWriteCmd = &cobra.Command{
 			force          = lo.Must(cmd.Flags().GetBool("force"))
 			configFilePath = filepath.Join(
 				where.Config(),
-				fmt.Sprintf("%s.%s", constant.Mangal, "toml"),
+				fmt.Sprintf("%s.%s", constant.StaticMangal, "toml"),
 			)
 		)
 
@@ -237,7 +237,7 @@ var configDeleteCmd = &cobra.Command{
 			Remove(
 				filepath.Join(
 					where.Config(),
-					fmt.Sprintf("%s.%s", constant.Mangal, "toml"),
+					fmt.Sprintf("%s.%s", constant.StaticMangal, "toml"),
 				),
 			)
 

@@ -1,20 +1,20 @@
 package installer
 
 import (
-	"encoding/base64"
-	"encoding/json"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/where"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/where"
 )
 
 type Scraper struct {
 	Name        string
 	URL         string
+	SHA256      string
 	Description string
 	Contents    string
 }
@@ -25,55 +25,26 @@ func (s *Scraper) Path() string {
 }
 
 func (s *Scraper) GithubURL() string {
-	return fmt.Sprintf("https://github.com/%s/%s/blob/%s/scrapers/%s.lua", collector.user, collector.repo, collector.branch, s.Name)
+	return s.URL
 }
 
 func (s *Scraper) download() error {
 	if s.Contents != "" {
 		return nil
 	}
-
-	if s.URL == "" {
-		return fmt.Errorf("url must be set")
+	if s.URL == "" || s.SHA256 == "" {
+		return fmt.Errorf("scraper URL and digest must be set")
 	}
 
-	res, err := http.Get(s.URL)
+	contents, err := get(s.URL)
 	if err != nil {
 		return err
 	}
-
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to get %s: %s", s.URL, res.Status)
+	digest := sha256.Sum256(contents)
+	if hex.EncodeToString(digest[:]) != s.SHA256 {
+		return fmt.Errorf("scraper %s digest verification failed", s.Name)
 	}
-
-	var b []byte
-	b, err = io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-
-	var info = struct {
-		Content  string `json:"content"`
-		Encoding string `json:"encoding"`
-	}{}
-
-	err = json.Unmarshal(b, &info)
-	if err != nil {
-		return err
-	}
-
-	switch info.Encoding {
-	case "base64":
-		text, err := base64.StdEncoding.DecodeString(info.Content)
-		if err != nil {
-			return err
-		}
-
-		s.Contents = string(text)
-	default:
-		return fmt.Errorf("unsupported encoding: %s", info.Encoding)
-	}
-
+	s.Contents = string(contents)
 	return nil
 }
 

@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/metafates/mangal/color"
-	"github.com/metafates/mangal/config"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/style"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/color"
+	"github.com/ryanmccool/static-mangal/config"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/style"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slices"
@@ -33,7 +33,7 @@ var envCmd = &cobra.Command{
 		slices.Sort(config.EnvExposed)
 		for _, env := range config.EnvExposed {
 			if env != where.EnvConfigPath {
-				env = strings.ToUpper(constant.Mangal + "_" + config.EnvKeyReplacer.Replace(env))
+				env = strings.ToUpper(constant.StaticMangal + "_" + config.EnvKeyReplacer.Replace(env))
 			}
 			value := os.Getenv(env)
 			present := value != ""

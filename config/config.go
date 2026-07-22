@@ -2,10 +2,10 @@ package config
 
 import (
 	"fmt"
-	"github.com/metafates/mangal/constant"
-	"github.com/metafates/mangal/filesystem"
-	"github.com/metafates/mangal/key"
-	"github.com/metafates/mangal/where"
+	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/filesystem"
+	"github.com/ryanmccool/static-mangal/key"
+	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"os"
@@ -40,7 +40,7 @@ func Setup() error {
 }
 
 func setName() {
-	viper.SetConfigName(constant.Mangal)
+	viper.SetConfigName(constant.StaticMangal)
 	viper.SetConfigType("toml")
 }
 
@@ -55,7 +55,7 @@ func setPaths() {
 
 // setEnvs sets the environment variables
 func setEnvs() {
-	viper.SetEnvPrefix(constant.Mangal)
+	viper.SetEnvPrefix(constant.StaticMangal)
 	viper.SetEnvKeyReplacer(EnvKeyReplacer)
 
 	for _, env := range EnvExposed {

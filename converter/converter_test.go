@@ -1,7 +1,7 @@
 package converter
 
 import (
-	"github.com/metafates/mangal/constant"
+	"github.com/ryanmccool/static-mangal/constant"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
