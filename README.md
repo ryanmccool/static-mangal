@@ -1,5 +1,5 @@
 <h1 align="center">
-<strong>Mangal 4 ☄️</strong>
+<strong>Static Mangal ☄️</strong>
 </h1>
 
 <p align="center">
@@ -14,7 +14,7 @@
 </h3>
 
 <p align="center">
-    <img alt="Mangal 4 TUI" src="assets/tui.gif">
+    <img alt="Static Mangal TUI" src="assets/tui.gif">
 </p>
 
 > [!CAUTION]
@@ -25,7 +25,7 @@
 ## Try it!
 
 ```shell
-curl -sSL mangal.metafates.one/run | sh
+curl -sSL github.com/ryanmccool/static-mangal | sh
 ```
 
 > **Note** This script does not install anything, it just downloads, verifies and runs Mangal.
@@ -50,7 +50,7 @@ curl -sSL mangal.metafates.one/run | sh
 - __Caching__ - Mangal will cache as much data as possible, so you don't have to wait for it to download the same data over and over again. 
 - __4 Different export formats__ - PDF, CBZ, ZIP and plain images
 - __TUI ✨__ - You already know how to use it! (ﾉ>ω<)ﾉ :｡･::･ﾟ’★,｡･:･ﾟ’☆
-- __Scriptable__ - You can use Mangal in your scripts, it's just a CLI app after all. [Examples](https://github.com/metafates/mangal/wiki/Inline-mode)
+- __Scriptable__ - You can use Mangal in your scripts, it's just a CLI app after all. [Examples](https://github.com/ryanmccool/static-mangal/wiki/Inline-mode)
 - __History__ - Resume your reading from where you left off!
 - __Fast?__ - YES.
 - __Monolith__ - ZERO runtime dependencies. Even Lua is built in. Easy to install and use.
@@ -61,10 +61,10 @@ curl -sSL mangal.metafates.one/run | sh
 
 ### Script (Linux, MacOS, Termux)
 
-Install using [this shell script](https://github.com/metafates/mangal/blob/main/scripts/install)
+Install using [this shell script](https://github.com/ryanmccool/static-mangal/blob/main/scripts/install)
 
 ```shell
-curl -sSL mangal.metafates.one/install | sh
+curl -sSL github.com/ryanmccool/static-mangal | sh
 ```
 
 This script will automatically detect OS & Distro and use the best option available.
@@ -138,7 +138,7 @@ Visit this link to install [Go](https://go.dev/doc/install).
 
 Clone the repo
 ```shell
-git clone --depth 1 https://github.com/metafates/mangal.git
+git clone --depth 1 https://github.com/ryanmccool/static-mangal.git
 cd mangal
 ```
 
@@ -172,7 +172,7 @@ GOOS=linux GOARCH=arm64 make build
 
 ### Pre-compiled
 
-Download the pre-compiled binaries from the [releases page](https://github.com/metafates/mangal/releases/latest)
+Download the pre-compiled binaries from the [releases page](https://github.com/ryanmccool/static-mangal/releases/latest)
 and copy them to the desired location.
 
 ## Usage
@@ -226,10 +226,10 @@ Inline mode is intended for use with other scripts.
 
 Type `mangal help inline` for more information.
 
-See [Wiki](https://github.com/metafates/mangal/wiki/Inline-mode) for more examples.
+See [Wiki](https://github.com/ryanmccool/static-mangal/wiki/Inline-mode) for more examples.
 
 <p align="center">
-    <img alt="Mangal 4 Inline" src="assets/inline.gif">
+    <img alt="Static Mangal Inline" src="assets/inline.gif">
 </p>
 
 ### Other
@@ -290,7 +290,7 @@ Mangal also supports integration with anilist.
 Besides fetching metadata for each manga when downloading,
 mangal can also mark chapters as read on your Anilsit profile when you read them inside mangal.
 
-For more information see [wiki](https://github.com/metafates/mangal/wiki/Anilist-Integration)
+For more information see [wiki](https://github.com/ryanmccool/static-mangal/wiki/Anilist-Integration)
 
 ## Honorable mentions
 
@@ -322,7 +322,7 @@ For more information see [wiki](https://github.com/metafates/mangal/wiki/Anilist
 And of course, thanks to all contributors! You are awesome!
 
 <p align="center">
-<a href="https://github.com/metafates/mangal/graphs/contributors">
+<a href="https://github.com/ryanmccool/static-mangal/graphs/contributors">
   <img alt="Contributors" src="https://contrib.rocks/image?repo=metafates/mangal" />
 </a>
 </p>
