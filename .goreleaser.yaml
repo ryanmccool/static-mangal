@@ -84,33 +84,6 @@ dockers:
     skip_push: false
     use: docker
 
-brews:
-  - name: static-mangal
-
-    tap:
-      owner: ryanmccool
-      name: homebrew-static-mangal
-      branch: main
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-
-    commit_author:
-      name: goreleaserbot
-      email: bot@goreleaser.com
-
-    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-    homepage: "https://github.com/ryanmccool/static-mangal"
-    description: "Static Mangal CLI"
-    license: "MIT"
-    skip_upload: false
-
-    test: |
-      system "#{bin}/mangal -v"
-
-    install: |-
-      bin.install "mangal"
-      bash_completion.install "completions/mangal.bash" => "mangal"
-      zsh_completion.install "completions/mangal.zsh" => "_mangal"
-      fish_completion.install "completions/mangal.fish"
 
 scoop:
   bucket:
