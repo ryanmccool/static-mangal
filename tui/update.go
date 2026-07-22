@@ -566,17 +566,17 @@ func (b *statefulBubble) updateChapters(msg tea.Msg) (tea.Model, tea.Cmd) {
 			b.newState(readState)
 			return b, tea.Batch(b.readChapter(chapter), b.waitForChapterRead(), b.startLoading())
 		case key.Matches(msg, b.keymap.confirm):
-			if len(b.selectedChapters) != 0 {
-				b.newState(confirmState)
-			} else if viper.GetBool(key2.TUIReadOnEnter) {
+			if len(b.selectedChapters) == 0 {
 				if b.chaptersC.SelectedItem() == nil {
 					break
 				}
 
-				chapter := b.chaptersC.SelectedItem().(*listItem).internal.(*source.Chapter)
-				b.newState(readState)
-				return b, tea.Batch(b.readChapter(chapter), b.waitForChapterRead(), b.startLoading())
+				item := b.chaptersC.SelectedItem().(*listItem)
+				chapter := item.internal.(*source.Chapter)
+				item.marked = true
+				b.selectedChapters[chapter] = struct{}{}
 			}
+			b.newState(confirmState)
 		}
 	}
 
