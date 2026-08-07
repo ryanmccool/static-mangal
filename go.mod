@@ -36,7 +36,7 @@ require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/antchfx/htmlquery v1.2.6 // indirect
 	github.com/antchfx/xmlquery v1.3.14 // indirect
-	github.com/antchfx/xpath v1.2.2 // indirect
+	github.com/antchfx/xpath v1.3.6 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52 v1.2.1 // indirect
 	github.com/cbroglie/mustache v1.4.0 // indirect
