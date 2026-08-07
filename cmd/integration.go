@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/ryanmccool/static-mangal/config"
 	"github.com/ryanmccool/static-mangal/icon"
 	"github.com/ryanmccool/static-mangal/integration/anilist"
 	"github.com/ryanmccool/static-mangal/key"
@@ -25,6 +26,8 @@ var integrationCmd = &cobra.Command{
 	Long:  `Integration with other services`,
 }
 
+var askAnilist = survey.AskOne
+
 var integrationAnilistCmd = &cobra.Command{
 	Use:   "anilist",
 	Short: "Integration with Anilist",
@@ -37,7 +40,7 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 			viper.Set(key.AnilistSecret, "")
 			viper.Set(key.AnilistID, "")
 			log.Info("Anilist integration disabled")
-			handleErr(viper.WriteConfig())
+			handleErr(config.WriteExisting())
 		}
 
 		if !viper.GetBool(key.AnilistEnable) {
@@ -46,7 +49,7 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 				Default: false,
 			}
 			var response bool
-			err := survey.AskOne(&confirm, &response)
+			err := askAnilist(&confirm, &response)
 			handleErr(err)
 
 			if !response {
@@ -54,16 +57,10 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 			}
 
 			viper.Set(key.AnilistEnable, response)
-			err = viper.WriteConfig()
+			err = config.Write()
 			if err != nil {
-				switch err.(type) {
-				case viper.ConfigFileNotFoundError:
-					err = viper.SafeWriteConfig()
-					handleErr(err)
-				default:
-					handleErr(err)
-					log.Error(err)
-				}
+				handleErr(err)
+				log.Error(err)
 			}
 		}
 
@@ -73,7 +70,7 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 				Help:    "",
 			}
 			var response string
-			err := survey.AskOne(&input, &response)
+			err := askAnilist(&input, &response)
 			handleErr(err)
 
 			if response == "" {
@@ -81,17 +78,14 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 			}
 
 			viper.Set(key.AnilistID, response)
-			err = viper.WriteConfig()
+			err = config.WriteExisting()
 			handleErr(err)
 		}
 
-		if viper.GetString(key.AnilistSecret) == "" {
-			input := survey.Input{
-				Message: "Anilsit client secret is not set. Please enter it:",
-				Help:    "",
-			}
+		if config.SensitiveValue(key.AnilistSecret) == "" {
+			input := anilistSecretPrompt()
 			var response string
-			err := survey.AskOne(&input, &response)
+			err := askAnilist(input, &response)
 			handleErr(err)
 
 			if response == "" {
@@ -99,11 +93,11 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 			}
 
 			viper.Set(key.AnilistSecret, response)
-			err = viper.WriteConfig()
+			err = config.WriteExisting()
 			handleErr(err)
 		}
 
-		if viper.GetString(key.AnilistCode) == "" {
+		if config.SensitiveValue(key.AnilistCode) == "" {
 			authURL := anilist.New().AuthURL()
 			confirmOpenInBrowser := survey.Confirm{
 				Message: "Open browser to authenticate with Anilist?",
@@ -111,7 +105,7 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 			}
 
 			var openInBrowser bool
-			err := survey.AskOne(&confirmOpenInBrowser, &openInBrowser)
+			err := askAnilist(&confirmOpenInBrowser, &openInBrowser)
 			if err == nil && openInBrowser {
 				err = open.Start(authURL)
 			}
@@ -121,13 +115,10 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 				fmt.Println(authURL)
 			}
 
-			input := survey.Input{
-				Message: "Anilsit code is not set. Please copy it from the link and paste in here:",
-				Help:    "",
-			}
+			input := anilistCodePrompt()
 
 			var response string
-			err = survey.AskOne(&input, &response)
+			err = askAnilist(input, &response)
 			handleErr(err)
 
 			if response == "" {
@@ -135,10 +126,24 @@ See https://github.com/ryanmccool/static-mangal/tree/main/docs for current integ
 			}
 
 			viper.Set(key.AnilistCode, response)
-			err = viper.WriteConfig()
+			err = config.WriteExisting()
 			handleErr(err)
 		}
 
 		fmt.Printf("%s Anilist integration was set up\n", icon.Get(icon.Success))
 	},
+}
+
+func anilistSecretPrompt() *survey.Password {
+	return &survey.Password{
+		Message: "Anilsit client secret is not set. Please enter it:",
+		Help:    "",
+	}
+}
+
+func anilistCodePrompt() *survey.Password {
+	return &survey.Password{
+		Message: "Anilsit code is not set. Please copy it from the link and paste in here:",
+		Help:    "",
+	}
 }

@@ -2,11 +2,12 @@ version: 2
 
 before:
   hooks:
-    - go mod tidy
     - go generate ./...
 
 builds:
-  - env:
+  - id: archive
+    binary: static-mangal
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -23,11 +24,37 @@ builds:
       - -X 'github.com/ryanmccool/static-mangal/constant.BuiltAt={{ .Date }}'
       - -X 'github.com/ryanmccool/static-mangal/constant.BuiltBy={{ .Env.USER }}'
       - -X 'github.com/ryanmccool/static-mangal/constant.Revision={{ .ShortCommit }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.Version={{ .Version }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.Distribution=archive'
+      - -s
+      - -w
+
+  - id: package
+    binary: static-mangal
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -X 'github.com/ryanmccool/static-mangal/constant.BuiltAt={{ .Date }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.BuiltBy={{ .Env.USER }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.Revision={{ .ShortCommit }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.Version={{ .Version }}'
+      - -X 'github.com/ryanmccool/static-mangal/constant.Distribution=package'
       - -s
       - -w
 
 archives:
-  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ title .Os }}_{{ .Arch }}"
+  - ids:
+      - archive
+    name_template: "static-mangal_{{ .Version }}_{{ title .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         format: zip
@@ -81,7 +108,7 @@ release:
   header: |
     To install:
     ```sh
-    curl -sSL github.com/ryanmccool/static-mangal | sh
+    curl -fsSL https://raw.githubusercontent.com/ryanmccool/static-mangal/main/scripts/install | sh
     ```
 
     ## What's new?
@@ -95,7 +122,9 @@ release:
     Bugs? Suggestions? [Open an issue](https://github.com/ryanmccool/static-mangal/issues/new/choose)
 
 nfpms:
-  - file_name_template: "{{ .ConventionalFileName }}"
+  - ids:
+      - package
+    file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://github.com/ryanmccool/static-mangal
     maintainer: Ryan McCool
     description: |-

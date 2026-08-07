@@ -11,6 +11,11 @@ import (
 	"strconv"
 )
 
+var (
+	markClient       = httpDoer(http.DefaultClient)
+	findClosestManga = anilist.FindClosest
+)
+
 var markReadQuery = `
 mutation ($ID: Int, $progress: Int) {
 	SaveMediaListEntry (mediaId: $ID, progress: $progress, status: CURRENT) {
@@ -28,7 +33,7 @@ func (a *Anilist) MarkRead(chapter *source.Chapter) error {
 		}
 	}
 
-	manga, err := anilist.FindClosest(chapter.Manga.Name)
+	manga, err := findClosestManga(chapter.Manga.Name)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -68,15 +73,16 @@ func (a *Anilist) MarkRead(chapter *source.Chapter) error {
 	req.Header.Set("Accept", "application/json")
 
 	// send request
-	log.Info("Sending request to Anilist: " + string(jsonBody))
-	resp, err := http.DefaultClient.Do(req)
+	infoLog("Sending request to Anilist")
+	resp, err := markClient.Do(req)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Info("Request failed with status code: " + strconv.Itoa(resp.StatusCode))
+		infoLog("Request failed with status code: " + strconv.Itoa(resp.StatusCode))
 		return fmt.Errorf("invalid response code %d", resp.StatusCode)
 	}
 

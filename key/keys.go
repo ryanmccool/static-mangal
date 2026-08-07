@@ -73,6 +73,16 @@ const (
 	AnilistLinkOnMangaSelect = "anilist.link_on_manga_select"
 )
 
+// IsSensitive reports whether a configuration key contains a user credential.
+func IsSensitive(name string) bool {
+	switch name {
+	case AnilistSecret, AnilistCode:
+		return true
+	default:
+		return false
+	}
+}
+
 const (
 	TUIItemSpacing        = "tui.item_spacing"
 	TUISearchPromptString = "tui.search_prompt"

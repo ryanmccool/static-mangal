@@ -1,7 +1,13 @@
 package constant
 
-const (
-	StaticMangal = "static-mangal"
+const StaticMangal = "static-mangal"
+
+var (
 	Version      = "0.2.0"
-	UserAgent    = "static-mangal/0.2.0 (+https://github.com/ryanmccool/static-mangal)"
+	Distribution = "development"
+	UserAgent    = ""
 )
+
+func init() {
+	UserAgent = StaticMangal + "/" + Version + " (+https://github.com/ryanmccool/static-mangal)"
+}

@@ -22,15 +22,35 @@ func mkdir(path string) string {
 // Config path
 // Will create the directory if it doesn't exist
 func Config() string {
-	var path string
+	return lo.Must(ConfigWithError())
+}
+
+// ConfigWithError returns the configuration directory, creating it when needed
+// and enforcing the platform-specific configuration permissions.
+func ConfigWithError() (string, error) {
+	var (
+		path   string
+		custom bool
+	)
 
 	if customDir, present := os.LookupEnv(EnvConfigPath); present {
 		path = customDir
+		custom = true
 	} else {
 		path = filepath.Join(lo.Must(os.UserConfigDir()), constant.StaticMangal)
 	}
 
-	return mkdir(path)
+	if err := ensureConfigDirectory(path, custom); err != nil {
+		return "", err
+	}
+
+	return path, nil
+}
+
+// EnsureConfigFilePermissions applies the platform-specific permissions to an
+// existing configuration file. A missing file is left for the config writer.
+func EnsureConfigFilePermissions(path string) error {
+	return ensureConfigFilePermissions(path)
 }
 
 // Sources path

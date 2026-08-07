@@ -101,7 +101,7 @@ The normal download path is `downloader.Download`:
 
 | State | Default location | Owner |
 | --- | --- | --- |
-| Configuration | OS config directory / `mangal` | Viper, `config/` |
+| Configuration | OS config directory / `static-mangal` | Viper, `config/`; plaintext TOML credentials are user-only (`0700` directory/`0600` file) on Unix and rely on account ACLs on Windows |
 | Custom sources | `<config>/sources` | `provider/custom`, `installer` |
 | AniList bindings | `<config>/anilist.json` | `anilist/` |
 | History | `<config>/history.json` | `history/` |
@@ -115,7 +115,9 @@ The normal download path is `downloader.Download`:
 
 ## Configuration model
 
-`config.Setup` configures Viper to read `mangal.toml`, bind every defined key to an environment variable with `MANGAL_` prefix and dot-to-underscore mapping, install defaults, and resolve `~`/environment variables in `downloader.path` after reading config.
+`config.Setup` configures Viper to read `static-mangal.toml`, bind non-sensitive keys to environment variables with `MANGAL_` prefix and dot-to-underscore mapping, install defaults, and resolve `~`/environment variables in `downloader.path` after reading config. Sensitive credential environment values are intentionally not registered with Viper; AniList runtime access uses the centralized `config.SensitiveValue` accessor, falling back to persisted config without serializing environment-only credentials. The centralized config write helper preserves Viper's TOML serialization while enforcing the configuration directory and file permissions after creation and every write; it also hardens legacy files when they are read. It does not change cache, history, log, source, download, or temporary paths.
+
+`MANGAL_CONFIG_PATH` may select a custom config directory, but an existing custom directory must already be a dedicated owner-only directory; unsafe custom paths are rejected rather than chmodded. Missing custom directories are created privately. The default application directory retains migration/hardening behavior.
 
 There are 53 defaulted keys (`key.DefinedFieldsCount`). They group into:
 
@@ -128,13 +130,13 @@ There are 53 defaulted keys (`key.DefinedFieldsCount`). They group into:
 - custom-scraper repository coordinates and generator author;
 - logs; AniList OAuth credentials and behavior; and TUI/CLI presentation.
 
-`mangal config info` remains the canonical runtime reference because it emits every key, type, current/default value, description, and corresponding environment variable.
+`mangal config info` remains the canonical runtime reference because it emits every key, type, current/default value, description, and corresponding environment variable; sensitive current values are always masked.
 
 ## Trust boundaries
 
 1. **Provider responses and page images** are untrusted remote input. The CLI parses HTML/JSON and buffers images entirely in memory before conversion.
 2. **Custom Lua scrapers** are executable code fetched from a remote repository selected by mutable configuration values. They run in-process with preloaded library modules.
-3. **AniList credentials** are read from normal configuration fields. The access token is memory-only, but client ID, secret, and OAuth PIN may be persisted in plaintext TOML.
+3. **AniList credentials** are read from normal configuration fields. The access token is memory-only, but client ID, secret, and OAuth PIN may be persisted in plaintext TOML. Unix limits the configuration directory to the owner and the file to owner read/write; Windows depends on account ACLs. No keychain is used.
 4. **Downloaded archives** are parsed by metadata-update code. `util.Unzip` is intended to reject Zip Slip paths but checks the uncleaned joined path; it should normalize before verifying containment.
 5. **External readers and browsers** are user-configured commands and therefore a deliberate local execution boundary.
 

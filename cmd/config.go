@@ -4,23 +4,28 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ryanmccool/static-mangal/color"
-	"os"
-	"path/filepath"
-	"sort"
-	"strconv"
-
+	"github.com/AlecAivazis/survey/v2"
 	levenshtein "github.com/ka-weihe/fast-levenshtein"
+	"github.com/ryanmccool/static-mangal/color"
 	"github.com/ryanmccool/static-mangal/config"
 	"github.com/ryanmccool/static-mangal/constant"
 	"github.com/ryanmccool/static-mangal/filesystem"
 	"github.com/ryanmccool/static-mangal/icon"
+	"github.com/ryanmccool/static-mangal/key"
 	"github.com/ryanmccool/static-mangal/style"
 	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
 )
+
+var askConfigPassword = func(prompt *survey.Password, response *string) error {
+	return survey.AskOne(prompt, response)
+}
 
 func errUnknownKey(key string) error {
 	closest := lo.MinBy(lo.Keys(config.Default), func(a string, b string) bool {
@@ -107,7 +112,6 @@ func init() {
 	_ = configSetCmd.RegisterFlagCompletionFunc("key", completionConfigKeys)
 
 	configSetCmd.Flags().StringSliceP("value", "v", []string{}, "The value to set")
-	lo.Must0(configSetCmd.MarkFlagRequired("value"))
 
 	// deprecated flags for backwards compatibility
 	configSetCmd.Flags().BoolP("bool", "b", false, "Set the value type to bool")
@@ -127,43 +131,73 @@ var configSetCmd = &cobra.Command{
 			handleErr(errUnknownKey(key))
 		}
 
-		var v any
-		switch config.Default[key].Value.(type) {
-		case string:
-			v = value[0]
-		case int:
-			parsedInt, err := strconv.ParseInt(value[0], 10, 64)
-			if err != nil {
-				handleErr(fmt.Errorf("invalid integer value: %s", value))
-			}
-
-			v = int(parsedInt)
-		case bool:
-			parsedBool, err := strconv.ParseBool(value[0])
-			if err != nil {
-				handleErr(fmt.Errorf("invalid boolean value: %s", value))
-			}
-
-			v = parsedBool
-		case []string:
-			v = value
-		}
+		v, err := configSetValue(key, value, cmd.Flags().Changed("value"))
+		handleErr(err)
 
 		viper.Set(key, v)
-		switch err := viper.WriteConfig(); err.(type) {
-		case viper.ConfigFileNotFoundError:
-			handleErr(viper.SafeWriteConfig())
-		default:
-			handleErr(err)
-		}
+		handleErr(config.Write())
 
 		fmt.Printf(
 			"%s set %s to %s\n",
 			style.Fg(color.Green)(icon.Get(icon.Success)),
 			style.Fg(color.Purple)(key),
-			style.Fg(color.Yellow)(fmt.Sprintf("%v", v)),
+			style.Fg(color.Yellow)(fmt.Sprintf("%v", configSetDisplayValue(key, v))),
 		)
 	},
+}
+
+func configSetValue(name string, value []string, valueFlagSet bool) (any, error) {
+	if key.IsSensitive(name) {
+		if valueFlagSet {
+			return nil, errors.New("sensitive config values cannot be provided with --value; enter them interactively instead")
+		}
+
+		prompt := &survey.Password{
+			Message: fmt.Sprintf("Enter value for %s:", name),
+			Help:    "",
+		}
+		var response string
+		if err := askConfigPassword(prompt, &response); err != nil {
+			return nil, err
+		}
+
+		return response, nil
+	}
+
+	if len(value) == 0 {
+		return nil, errors.New(`required flag(s) "value" not set`)
+	}
+
+	switch config.Default[name].Value.(type) {
+	case string:
+		return value[0], nil
+	case int:
+		parsedInt, err := strconv.ParseInt(value[0], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid integer value: %s", value)
+		}
+
+		return int(parsedInt), nil
+	case bool:
+		parsedBool, err := strconv.ParseBool(value[0])
+		if err != nil {
+			return nil, fmt.Errorf("invalid boolean value: %s", value)
+		}
+
+		return parsedBool, nil
+	case []string:
+		return value, nil
+	default:
+		return nil, nil
+	}
+}
+
+func configSetDisplayValue(name string, value any) any {
+	if key.IsSensitive(name) {
+		return config.RedactedValue
+	}
+
+	return value
 }
 
 func init() {
@@ -185,8 +219,16 @@ var configGetCmd = &cobra.Command{
 			handleErr(errUnknownKey(key))
 		}
 
-		fmt.Println(viper.Get(key))
+		fmt.Println(configGetValue(key))
 	},
+}
+
+func configGetValue(name string) any {
+	if key.IsSensitive(name) {
+		return config.RedactedValue
+	}
+
+	return viper.Get(name)
 }
 
 func init() {
@@ -199,11 +241,13 @@ var configWriteCmd = &cobra.Command{
 	Short: "Write current config to the file",
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			force          = lo.Must(cmd.Flags().GetBool("force"))
-			configFilePath = filepath.Join(
-				where.Config(),
-				fmt.Sprintf("%s.%s", constant.StaticMangal, "toml"),
-			)
+			force = lo.Must(cmd.Flags().GetBool("force"))
+		)
+		configDir, err := where.ConfigWithError()
+		handleErr(err)
+		configFilePath := filepath.Join(
+			configDir,
+			fmt.Sprintf("%s.%s", constant.StaticMangal, "toml"),
 		)
 
 		if force {
@@ -214,7 +258,7 @@ var configWriteCmd = &cobra.Command{
 			handleErr(err)
 		}
 
-		handleErr(viper.SafeWriteConfig())
+		handleErr(config.SafeWrite())
 		fmt.Printf(
 			"%s wrote config to %s\n",
 			style.Fg(color.Green)(icon.Get(icon.Success)),
@@ -282,12 +326,7 @@ var configResetCmd = &cobra.Command{
 			viper.Set(key, config.Default[key].Value)
 		}
 
-		switch err := viper.WriteConfig(); err.(type) {
-		case viper.ConfigFileNotFoundError:
-			handleErr(viper.SafeWriteConfig())
-		default:
-			handleErr(err)
-		}
+		handleErr(config.Write())
 
 		if all {
 			fmt.Printf(

@@ -85,10 +85,22 @@ Do not describe a mutable remote scraper registry as "official" unless the fork 
 
 ## Credentials and user data
 
-- Treat AniList client secret and OAuth PIN as secrets. The inherited configuration model can persist them in normal TOML; do not log them or include them in support bundles.
+- Treat the AniList client secret and OAuth PIN as secrets. They remain plaintext in the normal TOML configuration file, but on Unix the configuration directory is enforced as `0700` and the file as `0600` after creation and every write, including legacy files. On Windows, storage security depends on the account ACLs; the application does not change them. No keychain is used.
+- `config get`, `config info`, and `env` retain complete key/environment listings while masking sensitive current values.
 - Store only the user data necessary for history and provider operation. Document cache/history/config locations through `mangal where`.
 - Add an export/delete command before expanding persistent library or account data.
 - Support offline use after a chapter is committed; network source availability must not be required to read/verify local artifacts.
+
+Configuration permission checks are limited to the configuration directory and TOML file. Cache, history, log, source, download, and temporary paths retain their existing permissions.
+
+`MANGAL_CONFIG_PATH` must point to a dedicated private directory. On Unix, a missing custom directory is created as `0700`; an existing custom directory must already be `0700` and is rejected rather than silently changed. The default application config directory may be migrated to `0700`.
+
+For this storage-hardening lane, run the focused checks on Unix and a Windows compile check from any host:
+
+```sh
+go test ./config ./where
+GOOS=windows go test -c ./config ./where
+```
 
 ## Documentation contract
 

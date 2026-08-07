@@ -135,6 +135,7 @@ __pycache__/
 build/
 develop-eggs/
 dist/
+.slim/deepwork/
 downloads/
 eggs/
 .eggs/

@@ -1,6 +1,7 @@
 package anilist
 
 import (
+	"github.com/ryanmccool/static-mangal/config"
 	"github.com/ryanmccool/static-mangal/key"
 	"github.com/spf13/viper"
 )
@@ -19,11 +20,11 @@ func (a *Anilist) id() string {
 }
 
 func (a *Anilist) secret() string {
-	return viper.GetString(key.AnilistSecret)
+	return config.SensitiveValue(key.AnilistSecret)
 }
 
 func (a *Anilist) code() string {
-	return viper.GetString(key.AnilistCode)
+	return config.SensitiveValue(key.AnilistCode)
 }
 
 // AuthURL returns the URL to authenticate with Anilist

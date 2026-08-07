@@ -21,9 +21,16 @@ func Setup() error {
 	setFs()
 	setEnvs()
 	setDefaults()
-	setPaths()
+	configDir, err := setPaths()
+	if err != nil {
+		return err
+	}
+	setConfigFilePermissions()
+	if err := where.EnsureConfigFilePermissions(filepath.Join(configDir, constant.StaticMangal+".toml")); err != nil {
+		return err
+	}
 
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 
 	if err != nil {
 		switch err.(type) {
@@ -49,8 +56,14 @@ func setFs() {
 }
 
 // setPaths sets the paths to the config files
-func setPaths() {
-	viper.AddConfigPath(where.Config())
+func setPaths() (string, error) {
+	path, err := where.ConfigWithError()
+	if err != nil {
+		return "", err
+	}
+
+	viper.AddConfigPath(path)
+	return path, nil
 }
 
 // setEnvs sets the environment variables
@@ -59,6 +72,9 @@ func setEnvs() {
 	viper.SetEnvKeyReplacer(EnvKeyReplacer)
 
 	for _, env := range EnvExposed {
+		if key.IsSensitive(env) {
+			continue
+		}
 		viper.MustBindEnv(env)
 	}
 }

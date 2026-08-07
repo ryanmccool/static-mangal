@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ryanmccool/static-mangal/color"
-	"github.com/ryanmccool/static-mangal/constant"
 	"github.com/ryanmccool/static-mangal/key"
 	"github.com/ryanmccool/static-mangal/style"
 	"github.com/samber/lo"
@@ -14,6 +13,8 @@ import (
 	"strings"
 	"text/template"
 )
+
+const RedactedValue = "[REDACTED]"
 
 // Field represents a single config field
 type Field struct {
@@ -52,7 +53,7 @@ func (f *Field) MarshalJSON() ([]byte, error) {
 		Type        string `json:"type"`
 	}{
 		Key:         f.Key,
-		Value:       viper.Get(f.Key),
+		Value:       displayValue(f.Key),
 		Default:     f.Value,
 		Description: f.Description,
 		Type:        f.typeName(),
@@ -67,7 +68,7 @@ var prettyTemplate = lo.Must(template.New("pretty").Funcs(template.FuncMap{
 	"purple": style.Fg(color.Purple),
 	"blue":   style.Fg(color.Blue),
 	"cyan":   style.Fg(color.Cyan),
-	"value":  func(k string) any { return viper.Get(k) },
+	"value":  displayValue,
 	"hl": func(v any) string {
 		switch value := v.(type) {
 		case bool:
@@ -99,15 +100,16 @@ func (f *Field) Pretty() string {
 	return b.String()
 }
 
-func (f *Field) Env() string {
-	env := strings.ToUpper(EnvKeyReplacer.Replace(f.Key))
-	appPrefix := strings.ToUpper(constant.StaticMangal + "_")
-
-	if strings.HasPrefix(env, appPrefix) {
-		return env
+func displayValue(name string) any {
+	if key.IsSensitive(name) {
+		return RedactedValue
 	}
 
-	return appPrefix + env
+	return viper.Get(name)
+}
+
+func (f *Field) Env() string {
+	return EnvName(f.Key)
 }
 
 // Pretty format field as string for further cli output

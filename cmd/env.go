@@ -3,14 +3,13 @@ package cmd
 import (
 	"github.com/ryanmccool/static-mangal/color"
 	"github.com/ryanmccool/static-mangal/config"
-	"github.com/ryanmccool/static-mangal/constant"
+	"github.com/ryanmccool/static-mangal/key"
 	"github.com/ryanmccool/static-mangal/style"
 	"github.com/ryanmccool/static-mangal/where"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slices"
 	"os"
-	"strings"
 )
 
 func init() {
@@ -32,8 +31,10 @@ var envCmd = &cobra.Command{
 		config.EnvExposed = append(config.EnvExposed, where.EnvConfigPath)
 		slices.Sort(config.EnvExposed)
 		for _, env := range config.EnvExposed {
+			configKey := env
+			sensitive := key.IsSensitive(configKey)
 			if env != where.EnvConfigPath {
-				env = strings.ToUpper(constant.StaticMangal + "_" + config.EnvKeyReplacer.Replace(env))
+				env = config.EnvName(env)
 			}
 			value := os.Getenv(env)
 			present := value != ""
@@ -52,6 +53,9 @@ var envCmd = &cobra.Command{
 			cmd.Print("=")
 
 			if present {
+				if sensitive {
+					value = config.RedactedValue
+				}
 				cmd.Println(style.Fg(color.Green)(value))
 			} else {
 				cmd.Println(style.Fg(color.Red)("unset"))

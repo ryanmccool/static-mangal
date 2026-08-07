@@ -25,16 +25,17 @@
 ## Try it!
 
 ```shell
-curl -sSL github.com/ryanmccool/static-mangal | sh
+curl -fsSL https://raw.githubusercontent.com/ryanmccool/static-mangal/main/scripts/install | sh
 ```
 
-> **Note** This script does not install anything, it just downloads, verifies and runs Mangal.
+> **Note** This script downloads, verifies, and installs the latest release on Linux or macOS.
 > Not available on Windows.
 
 ## Table of contents
 
 - [Features](#features)
 - [Installation](#installation)
+- [Updating](#updating)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Custom scrapers](#custom-scrapers)
@@ -59,16 +60,15 @@ curl -sSL github.com/ryanmccool/static-mangal | sh
 
 ## Installation
 
-### Script (Linux, MacOS, Termux)
+### Script (Linux, MacOS)
 
 Install using [this shell script](https://github.com/ryanmccool/static-mangal/blob/main/scripts/install)
 
 ```shell
-curl -sSL github.com/ryanmccool/static-mangal | sh
+curl -fsSL https://raw.githubusercontent.com/ryanmccool/static-mangal/main/scripts/install | sh
 ```
 
-This script will automatically detect OS & Distro and use the best option available.
-For example, on macOS it will try to use Homebrew, on Ubuntu it will install the `.deb` package and so on...
+This script detects the OS and distro, using a release package where supported and the verified archive otherwise.
 
 ### Arch Linux
 
@@ -77,26 +77,15 @@ thank you)
 
 ### MacOS
 
-Install using [Homebrew](https://brew.sh/)
-
-    brew tap ryanmccool/static-mangal
-    brew install static-mangal
+Install the verified release archive with the [shell installer](scripts/install).
 
 ### Windows
 
-Install using [Scoop](https://scoop.sh/) (thanks to [@SonaliBendre](https://github.com/SonaliBendre) for adding it to
-the official bucket)
-
-    scoop bucket add extras
-    scoop install mangal
+Use the verified [PowerShell installer](scripts/install.ps1).
 
 ### Termux
 
-Thanks to [@T-Dynamos](https://github.com/T-Dynamos) for adding it to the [termux-packages](https://github.com/termux/termux-packages)
-
-```shell
-pkg install mangal
-```
+No project-owned Termux package is published. Use a package manager that provides `static-mangal`, or download and install the verified release archive manually.
 
 ### Gentoo
 
@@ -175,6 +164,14 @@ GOOS=linux GOARCH=arm64 make build
 Download the pre-compiled binaries from the [releases page](https://github.com/ryanmccool/static-mangal/releases/latest)
 and copy them to the desired location.
 
+## Updating
+
+- Only user-owned, non-symlinked direct release-archive installs may apply updates in-app with `static-mangal update`; use `static-mangal update --check` to check without changing any installation.
+- System-wide archive installs, including the documented `sudo` shell installer, must be updated by rerunning the verified installer.
+- Package-managed installs must be updated through their package manager.
+- Source installs must be rebuilt from source.
+- Windows uses the verified PowerShell installer or a manual release installation until in-app self-update apply support is available.
+
 ## Usage
 
 ### TUI
@@ -238,12 +235,12 @@ See `mangal help` for more information
 
 ## Configuration
 
-Mangal uses [TOML](https://toml.io) format for configuration under the `mangal.toml` filename.
+Mangal uses [TOML](https://toml.io) format for configuration under the `static-mangal.toml` filename.
 Config path depends on the OS.
 To find yours, use `mangal where --config`.
-For example, on __Linux__ it would be `~/.config/mangal/mangal.toml`.
+For example, on __Linux__ it would be `~/.config/static-mangal/static-mangal.toml`.
 
-Use env variable `MANGAL_CONFIG_PATH` to set custom config path.
+Use env variable `MANGAL_CONFIG_PATH` to set a custom config path. The path must be a dedicated private directory. On Unix, a new directory is created with mode `0700`; an existing directory must already be owner-only (`0700`) and is never silently chmodded. The config file remains plaintext and is enforced as owner read/write (`0600`) on Unix. Windows relies on the account ACLs.
 > See `mangal env` to show all available env variables.
 
 | Command               | Description                                      |

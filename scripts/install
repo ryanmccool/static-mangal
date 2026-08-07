@@ -82,14 +82,19 @@ download() {
 }
 
 verify_checksums() {
-    info "Verifying checksums"
+    FILE="$1"
+    NAME=$(basename "$FILE")
+    EXPECTED=$(awk -v name="$NAME" '$2 == name { count++; value = $1 } END { if (count != 1) exit 1; print value }' checksums.txt) || die "Checksum entry for $NAME was not found exactly once"
+
     if has sha256sum; then
-        OK=$(sha256sum --ignore-missing --quiet --check checksums.txt)
+        ACTUAL=$(sha256sum "$FILE" | awk '{print $1}')
+    elif has shasum; then
+        ACTUAL=$(shasum -a 256 "$FILE" | awk '{print $1}')
     else
-        OK=$(shasum -a 256 --ignore-missing --quiet --check checksums.txt)
+        die "No SHA-256 program (sha256sum, shasum) found, please install one."
     fi
 
-    $OK || die "Checksums did not match! Abort"
+    test "$EXPECTED" = "$ACTUAL" || die "Checksum did not match for $NAME! Abort"
 }
 
 install_deb() {
@@ -128,7 +133,7 @@ install_deb() {
         info "Downloading checksums"
         download "checksums.txt" "$RELEASES_URL/download/$TAG/checksums.txt"
 
-        verify_checksums
+        verify_checksums "$DEB_FILE"
     )
 
     info "Installing"
@@ -136,25 +141,12 @@ install_deb() {
 }
 
 install_termux() {
-    info "Installing for Termux"
-    pkg install mangal
+    die "No project-owned Termux package is published. Use a package manager that provides static-mangal or download and install the verified release archive manually."
 }
 
 install_macos() {
-    if ! has brew; then
-        warn "Homebrew is not installed. Using alternative method"
-        install_binary
-        return
-    fi
-
-    info "Installing with Homebrew"
-    brew tap ryanmccool/static-mangal
-
-    if has mangal; then
-        brew reinstall mangal
-    else
-        brew install mangal
-    fi
+    warn "Homebrew publishing is unavailable. Installing the verified release archive"
+    install_binary
 }
 
 install_rpm() {
@@ -179,8 +171,8 @@ install_rpm() {
         ;;
     esac
 
-    RPM_NAME="${FILE_BASENAME}-${VERSION}.${ARCH}.rpm"
-    RPM_FILE="$TMPDIR/$DEB_NAME"
+    RPM_NAME="${FILE_BASENAME}-${VERSION}-1.${ARCH}.rpm"
+    RPM_FILE="$TMPDIR/$RPM_NAME"
 
     export RPM_FILE RPM_NAME
 
@@ -188,33 +180,36 @@ install_rpm() {
         cd "$TMPDIR"
 
         info "Downloading $RPM_NAME"
-        download "$DEB_FILE" "$RELEASES_URL/download/$TAG/$RPM_NAME"
+        download "$RPM_FILE" "$RELEASES_URL/download/$TAG/$RPM_NAME"
 
         info "Downloading checksums"
         download "checksums.txt" "$RELEASES_URL/download/$TAG/checksums.txt"
 
-        verify_checksums
+        verify_checksums "$RPM_FILE"
     )
 
     info "Installing"
-    sudo rpm --install "$RPM_FILE"
+    sudo rpm --upgrade "$RPM_FILE"
 }
 
 install_binary() {
     info "Installing raw binary"
 
     case "$ARCH" in
-    aarch64)
+    x86_64|amd64)
+        ARCH="amd64"
+        ;;
+    i[3-6]86)
+        ARCH="386"
+        ;;
+    aarch64|arm64)
         ARCH="arm64"
         ;;
-    armv*)
-        ARCH="armv6"
+    armv6*|armv7*|arm)
+        ARCH="arm"
         ;;
-    amd64)
-        ARCH="x86_64"
-        ;;
-    i*)
-        ARCH="i386"
+    *)
+        die "Unsupported architecture: $ARCH"
         ;;
     esac
 
@@ -232,7 +227,7 @@ install_binary() {
         info "Downloading checksums"
         download "checksums.txt" "$RELEASES_URL/download/$TAG/checksums.txt"
 
-        verify_checksums
+        verify_checksums "$TAR_FILE"
     )
 
     tar -xf "$TAR_FILE" -C "$TMPDIR"
@@ -245,12 +240,12 @@ install_binary() {
     fi
 
     info "Moving to ${OUT}"
-    sudo sh -c "install -Dm755 '$TMPDIR/$FILE_BASENAME' '${OUT}'"
+    sudo install -m 0755 "$TMPDIR/$FILE_BASENAME" "$OUT/$FILE_BASENAME"
     install_completions "$TMPDIR/completions"
 }
 
 pre_install() {
-    has mangal && warn "mangal is installed already, reinstalling"
+    has static-mangal && warn "static-mangal is installed already, reinstalling"
 
     RELEASES_URL="https://github.com/ryanmccool/static-mangal/releases"
     FILE_BASENAME="static-mangal"
@@ -275,10 +270,10 @@ pre_install() {
 }
 
 post_install() {
-    if has mangal; then
-        printf "\n🎉 \033[1;32mMangal was installed successfully\033[0m\n\n"
+    if has static-mangal; then
+        printf "\n🎉 \033[1;32mstatic-mangal was installed successfully\033[0m\n\n"
     else
-        die "Mangal was not installed or it's not in the PATH."
+        die "static-mangal was not installed or it's not in the PATH."
     fi
 }
 

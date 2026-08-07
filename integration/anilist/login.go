@@ -11,9 +11,18 @@ import (
 	"strconv"
 )
 
+type httpDoer interface {
+	Do(*http.Request) (*http.Response, error)
+}
+
+var (
+	loginClient = httpDoer(network.Client)
+	infoLog     = log.Info
+)
+
 // login to Anilist
 func (a *Anilist) login() error {
-	log.Info("Logging in to Anilist")
+	infoLog("Logging in to Anilist")
 
 	if a.id() == "" {
 		e := fmt.Errorf("no ID set")
@@ -44,7 +53,7 @@ func (a *Anilist) login() error {
 	jsonBody := lo.Must(json.Marshal(&body))
 
 	// create request
-	log.Info("Sending login request to Anilist")
+	infoLog("Sending login request to Anilist")
 	req, err := http.NewRequest(http.MethodPost, "https://anilist.co/api/v2/oauth/token", bytes.NewBuffer(jsonBody))
 	if err != nil {
 		log.Error(err)
@@ -56,22 +65,23 @@ func (a *Anilist) login() error {
 	req.Header.Set("Accept", "application/json")
 
 	// send request
-	resp, err := network.Client.Do(req)
+	resp, err := loginClient.Do(req)
 
 	// check for error
 	if err != nil {
 		log.Error(err)
 		return err
 	}
+	defer resp.Body.Close()
 
 	// check response code
 	if resp.StatusCode != http.StatusOK {
-		log.Info("Request failed with status code: " + strconv.Itoa(resp.StatusCode))
+		infoLog("Request failed with status code: " + strconv.Itoa(resp.StatusCode))
 		return fmt.Errorf("invalid response code %d", resp.StatusCode)
 	}
 
 	// decode response
-	log.Info("Decoding response from Anilist")
+	infoLog("Decoding response from Anilist")
 	var response struct {
 		AccessToken string `json:"access_token"`
 	}
@@ -82,7 +92,7 @@ func (a *Anilist) login() error {
 	}
 
 	// set token
-	log.Info("Logged in Anilist")
+	infoLog("Logged in Anilist")
 	a.token = response.AccessToken
 
 	return nil
