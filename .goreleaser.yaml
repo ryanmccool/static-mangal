@@ -76,35 +76,6 @@ changelog:
       - Merge branch
       - go mod tidy
 
-dockers:
-  - goos: linux
-    goarch: amd64
-    image_templates:
-      - "ghcr.io/ryanmccool/static-mangal:latest"
-    skip_push: false
-    use: docker
-
-
-scoop:
-  bucket:
-    owner: ryanmccool
-    name: scoop-static-mangal
-    branch: main
-    token: "{{ .Env.SCOOP_TAP_GITHUB_TOKEN }}"
-
-  folder: bucket
-
-  commit_author:
-    name: goreleaserbot
-    email: bot@goreleaser.com
-
-  commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
-  homepage: "https://github.com/ryanmccool/static-mangal"
-  description: "Static Mangal CLI"
-  license: MIT
-  skip_upload: false
-
-
 release:
   github:
     owner: ryanmccool
