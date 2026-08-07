@@ -3,12 +3,12 @@ package tui
 import (
 	"fmt"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wrap"
 	"github.com/ryanmccool/static-mangal/color"
 	"github.com/ryanmccool/static-mangal/icon"
 	"github.com/ryanmccool/static-mangal/key"
 	"github.com/ryanmccool/static-mangal/style"
 	"github.com/ryanmccool/static-mangal/util"
-	"github.com/muesli/reflow/wrap"
 	"github.com/spf13/viper"
 	"math/rand"
 	"strconv"
@@ -108,7 +108,7 @@ func (b *statefulBubble) viewConfirm() string {
 		[]string{
 			style.Title("Confirm"),
 			"",
-			fmt.Sprintf("%s Download %s?", icon.Get(icon.Question), util.Quantify(len(b.selectedChapters), "chapter", "chapters")),
+			fmt.Sprintf("%s Download %s as %s?", icon.Get(icon.Question), util.Quantify(len(b.selectedChapters), "chapter", "chapters"), style.Fg(color.Purple)(b.exportFormat)),
 		},
 	)
 }

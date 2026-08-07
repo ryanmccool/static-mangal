@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/ryanmccool/static-mangal/anilist"
 	"github.com/ryanmccool/static-mangal/color"
+	"github.com/ryanmccool/static-mangal/converter"
 	"github.com/ryanmccool/static-mangal/history"
 	"github.com/ryanmccool/static-mangal/installer"
 	key2 "github.com/ryanmccool/static-mangal/key"
@@ -49,6 +50,8 @@ type statefulBubble struct {
 	selectedSources   []source.Source
 	selectedManga     *source.Manga
 	selectedChapters  map[*source.Chapter]struct{} // mathematical set
+	exportFormats     []string
+	exportFormat      string
 
 	scrapersLoadedChannel       chan []*installer.Scraper
 	scraperInstalledChannel     chan *installer.Scraper
@@ -167,9 +170,17 @@ func (b *statefulBubble) stopLoading() tea.Cmd {
 
 func newBubble() *statefulBubble {
 	keymap := newStatefulKeymap()
+	exportFormats := converter.Available()
+	slices.Sort(exportFormats)
+	exportFormat := viper.GetString(key2.FormatsUse)
+	if !slices.Contains(exportFormats, exportFormat) && len(exportFormats) > 0 {
+		exportFormat = exportFormats[0]
+	}
 	bubble := statefulBubble{
 		statesHistory: util.Stack[state]{},
 		keymap:        keymap,
+		exportFormats: exportFormats,
+		exportFormat:  exportFormat,
 
 		scrapersLoadedChannel:       make(chan []*installer.Scraper),
 		scraperInstalledChannel:     make(chan *installer.Scraper),
