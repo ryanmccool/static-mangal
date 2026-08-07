@@ -632,7 +632,23 @@ func (b *statefulBubble) updateConfirm(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, b.keymap.quit):
 			return b, tea.Quit
+		case key.Matches(msg, b.keymap.left, b.keymap.right):
+			if len(b.exportFormats) == 0 {
+				break
+			}
+
+			current := slices.Index(b.exportFormats, b.exportFormat)
+			if current < 0 {
+				current = 0
+			}
+			if key.Matches(msg, b.keymap.left) {
+				current = (current - 1 + len(b.exportFormats)) % len(b.exportFormats)
+			} else {
+				current = (current + 1) % len(b.exportFormats)
+			}
+			b.exportFormat = b.exportFormats[current]
 		case key.Matches(msg, b.keymap.confirm):
+			viper.Set(key2.FormatsUse, b.exportFormat)
 			chapters := lo.Keys(b.selectedChapters)
 			slices.SortFunc(chapters, func(a, b *source.Chapter) bool {
 				return a.Index > b.Index

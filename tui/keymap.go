@@ -164,7 +164,9 @@ func (k *statefulKeymap) help() ([]key.Binding, []key.Binding) {
 	case anilistSelectState:
 		return to2(h(k.confirm, k.openURL, k.back))
 	case confirmState:
-		return to2(h(k.confirm, k.back, k.quit))
+		previous := withDescription(k.left, "previous format")
+		next := withDescription(k.right, "next format")
+		return to2(h(previous, next, k.confirm, k.back, k.quit))
 	case readState:
 		return to2(h(k.back, k.forceQuit))
 	case downloadState:
